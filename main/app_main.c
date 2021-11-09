@@ -60,8 +60,8 @@
 #define I2C_MASTER_TX_BUF_LEN    0                     // disabled
 #define I2C_MASTER_RX_BUF_LEN    0                     // disabled
 #define I2C_MASTER_FREQ_HZ       100000
-#define I2C_MASTER_SDA_IO        CONFIG_I2C_MASTER_SDA
-#define I2C_MASTER_SCL_IO        CONFIG_I2C_MASTER_SCL
+#define I2C_MASTER_SDA_IO        21
+#define I2C_MASTER_SCL_IO        22
 
 static void i2c_master_init(void)
 {
@@ -73,6 +73,7 @@ static void i2c_master_init(void)
     conf.scl_io_num = I2C_MASTER_SCL_IO;
     conf.scl_pullup_en = GPIO_PULLUP_DISABLE;  // GY-2561 provides 10kΩ pullups
     conf.master.clk_speed = I2C_MASTER_FREQ_HZ;
+    conf.clk_flags = 0;
     i2c_param_config(i2c_master_port, &conf);
     i2c_driver_install(i2c_master_port, conf.mode,
                        I2C_MASTER_RX_BUF_LEN,
@@ -101,7 +102,9 @@ static uint8_t _wait_for_user(void)
 }
 
 void lcd1602_task(void * pvParameter)
-{
+{   
+    printf("starting task routine\n");
+    
     // Set up I2C
     i2c_master_init();
     i2c_port_t i2c_num = I2C_MASTER_NUM;
